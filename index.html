@@ -37,13 +37,28 @@
         <script src="js/labels.js"></script>
         <script src="js/leaflet.photon.js"></script>
         <script src="js/leaflet-measure.js"></script>
-        <script src="data/NrmRegions_1.js"></script>
-        <script src="data/ProjectRecon20202026Trackers_2.js"></script>
-        <script src="data/ProjectReCon20202026202020261_3.js"></script>
+        <script src="data/ProjectRecon20202026Trackers_1.js"></script>
+        <script src="data/ProjectReCon20202026202020261_2.js"></script>
         <script>
+        var highlightLayer;
+        function highlightFeature(e) {
+            highlightLayer = e.target;
+
+            if (e.target.feature.geometry.type === 'LineString' || e.target.feature.geometry.type === 'MultiLineString') {
+              highlightLayer.setStyle({
+                color: '#ffff00',
+              });
+            } else {
+              highlightLayer.setStyle({
+                fillColor: '#ffff00',
+                fillOpacity: 1
+              });
+            }
+            highlightLayer.openPopup();
+        }
         var map = L.map('map', {
             zoomControl:false, maxZoom:28, minZoom:1
-        }).fitBounds([[-65.11721591091145,69.59328735762608],[24.790326188722823,205.01419101807107]]);
+        }).fitBounds([[-15.74889749658945,97.19975256664242],[74.15864460304483,232.6206562270874]]);
         var hash = new L.Hash(map);
         map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
         var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
@@ -137,57 +152,24 @@
         });
         layer_GoogleSatelliteHybrid_0;
         map.addLayer(layer_GoogleSatelliteHybrid_0);
-        function pop_NrmRegions_1(feature, layer) {
-            var popupContent = '<table>\
-                    <tr>\
-                        <th scope="row">name</th>\
-                        <td class="visible-with-data" id="name">' + (feature.properties['name'] !== null ? autolinker.link(String(feature.properties['name']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <th scope="row">state</th>\
-                        <td class="visible-with-data" id="state">' + (feature.properties['state'] !== null ? autolinker.link(String(feature.properties['state']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['description'] !== null ? autolinker.link(String(feature.properties['description']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                </table>';
-            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
-			layer.on('popupopen', function(e) {
-				addClassToPopupIfMedia(content, e.popup);
-			});
-			layer.bindPopup(content, { maxHeight: 400 });
-        }
-
-        function style_NrmRegions_1_0() {
-            return {
-                pane: 'pane_NrmRegions_1',
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1.0, 
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(27,166,178,0.14901960784313725)',
-                interactive: true,
-            }
-        }
-        map.createPane('pane_NrmRegions_1');
-        map.getPane('pane_NrmRegions_1').style.zIndex = 401;
-        map.getPane('pane_NrmRegions_1').style['mix-blend-mode'] = 'normal';
-        var layer_NrmRegions_1 = new L.geoJson(json_NrmRegions_1, {
-            attribution: '',
-            interactive: true,
-            dataVar: 'json_NrmRegions_1',
-            layerName: 'layer_NrmRegions_1',
-            pane: 'pane_NrmRegions_1',
-            onEachFeature: pop_NrmRegions_1,
-            style: style_NrmRegions_1_0,
-        });
-        bounds_group.addLayer(layer_NrmRegions_1);
-        map.addLayer(layer_NrmRegions_1);
-        function pop_ProjectRecon20202026Trackers_2(feature, layer) {
+        function pop_ProjectRecon20202026Trackers_1(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (var i in e.target._eventParents) {
+                        if (typeof e.target._eventParents[i].resetStyle === 'function') {
+                            e.target._eventParents[i].resetStyle(e.target);
+                        }
+                    }
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
             var popupContent = '<table>\
                     <tr>\
                         <td class="visible-with-data" id="CollectedOn" colspan="2"><strong>CollectedOn</strong><br />' + (feature.properties['CollectedOn'] !== null ? autolinker.link(String(feature.properties['CollectedOn']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
@@ -222,9 +204,9 @@
 			layer.bindPopup(content, { maxHeight: 400 });
         }
 
-        function style_ProjectRecon20202026Trackers_2_0() {
+        function style_ProjectRecon20202026Trackers_1_0() {
             return {
-                pane: 'pane_ProjectRecon20202026Trackers_2',
+                pane: 'pane_ProjectRecon20202026Trackers_1',
                 radius: 8.0,
                 opacity: 1,
                 color: 'rgba(0,0,0,1.0)',
@@ -238,27 +220,44 @@
                 interactive: true,
             }
         }
-        map.createPane('pane_ProjectRecon20202026Trackers_2');
-        map.getPane('pane_ProjectRecon20202026Trackers_2').style.zIndex = 402;
-        map.getPane('pane_ProjectRecon20202026Trackers_2').style['mix-blend-mode'] = 'normal';
-        var layer_ProjectRecon20202026Trackers_2 = new L.geoJson(json_ProjectRecon20202026Trackers_2, {
+        map.createPane('pane_ProjectRecon20202026Trackers_1');
+        map.getPane('pane_ProjectRecon20202026Trackers_1').style.zIndex = 401;
+        map.getPane('pane_ProjectRecon20202026Trackers_1').style['mix-blend-mode'] = 'normal';
+        var layer_ProjectRecon20202026Trackers_1 = new L.geoJson(json_ProjectRecon20202026Trackers_1, {
             attribution: '',
             interactive: true,
-            dataVar: 'json_ProjectRecon20202026Trackers_2',
-            layerName: 'layer_ProjectRecon20202026Trackers_2',
-            pane: 'pane_ProjectRecon20202026Trackers_2',
-            onEachFeature: pop_ProjectRecon20202026Trackers_2,
+            dataVar: 'json_ProjectRecon20202026Trackers_1',
+            layerName: 'layer_ProjectRecon20202026Trackers_1',
+            pane: 'pane_ProjectRecon20202026Trackers_1',
+            onEachFeature: pop_ProjectRecon20202026Trackers_1,
             pointToLayer: function (feature, latlng) {
                 var context = {
                     feature: feature,
                     variables: {}
                 };
-                return L.circleMarker(latlng, style_ProjectRecon20202026Trackers_2_0(feature));
+                return L.circleMarker(latlng, style_ProjectRecon20202026Trackers_1_0(feature));
             },
         });
-        bounds_group.addLayer(layer_ProjectRecon20202026Trackers_2);
-        map.addLayer(layer_ProjectRecon20202026Trackers_2);
-        function pop_ProjectReCon20202026202020261_3(feature, layer) {
+        bounds_group.addLayer(layer_ProjectRecon20202026Trackers_1);
+        map.addLayer(layer_ProjectRecon20202026Trackers_1);
+        function pop_ProjectReCon20202026202020261_2(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (var i in e.target._eventParents) {
+                        if (typeof e.target._eventParents[i].resetStyle === 'function') {
+                            e.target._eventParents[i].resetStyle(e.target);
+                        }
+                    }
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
             var popupContent = '<table>\
                     <tr>\
                         <td colspan="2">' + (feature.properties['CollectedOn'] !== null ? autolinker.link(String(feature.properties['CollectedOn']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
@@ -290,9 +289,9 @@
 			layer.bindPopup(content, { maxHeight: 400 });
         }
 
-        function style_ProjectReCon20202026202020261_3_0() {
+        function style_ProjectReCon20202026202020261_2_0() {
             return {
-                pane: 'pane_ProjectReCon20202026202020261_3',
+                pane: 'pane_ProjectReCon20202026202020261_2',
                 radius: 8.0,
                 opacity: 1,
                 color: 'rgba(247,225,55,1.0)',
@@ -306,26 +305,26 @@
                 interactive: true,
             }
         }
-        map.createPane('pane_ProjectReCon20202026202020261_3');
-        map.getPane('pane_ProjectReCon20202026202020261_3').style.zIndex = 403;
-        map.getPane('pane_ProjectReCon20202026202020261_3').style['mix-blend-mode'] = 'normal';
-        var layer_ProjectReCon20202026202020261_3 = new L.geoJson(json_ProjectReCon20202026202020261_3, {
+        map.createPane('pane_ProjectReCon20202026202020261_2');
+        map.getPane('pane_ProjectReCon20202026202020261_2').style.zIndex = 402;
+        map.getPane('pane_ProjectReCon20202026202020261_2').style['mix-blend-mode'] = 'normal';
+        var layer_ProjectReCon20202026202020261_2 = new L.geoJson(json_ProjectReCon20202026202020261_2, {
             attribution: '',
             interactive: true,
-            dataVar: 'json_ProjectReCon20202026202020261_3',
-            layerName: 'layer_ProjectReCon20202026202020261_3',
-            pane: 'pane_ProjectReCon20202026202020261_3',
-            onEachFeature: pop_ProjectReCon20202026202020261_3,
+            dataVar: 'json_ProjectReCon20202026202020261_2',
+            layerName: 'layer_ProjectReCon20202026202020261_2',
+            pane: 'pane_ProjectReCon20202026202020261_2',
+            onEachFeature: pop_ProjectReCon20202026202020261_2,
             pointToLayer: function (feature, latlng) {
                 var context = {
                     feature: feature,
                     variables: {}
                 };
-                return L.circleMarker(latlng, style_ProjectReCon20202026202020261_3_0(feature));
+                return L.circleMarker(latlng, style_ProjectReCon20202026202020261_2_0(feature));
             },
         });
-        bounds_group.addLayer(layer_ProjectReCon20202026202020261_3);
-        map.addLayer(layer_ProjectReCon20202026202020261_3);
+        bounds_group.addLayer(layer_ProjectReCon20202026202020261_2);
+        map.addLayer(layer_ProjectReCon20202026202020261_2);
         const url = {"Nominatim OSM": "https://nominatim.openstreetmap.org/search?format=geojson&addressdetails=1&",
         "France BAN": "https://api-adresse.data.gouv.fr/search/?"}
         var photonControl = L.control.photon({
@@ -380,9 +379,8 @@
             }
         });
         var overlaysTree = [
-            {label: '<img src="legend/ProjectReCon20202026202020261_3.png" /> Project ReCon 2020-2026 -  2020-2026 (1)', layer: layer_ProjectReCon20202026202020261_3},
-            {label: '<img src="legend/ProjectRecon20202026Trackers_2.png" /> Project Recon 2020-2026 Trackers', layer: layer_ProjectRecon20202026Trackers_2},
-            {label: '<img src="legend/NrmRegions_1.png" /> NrmRegions', layer: layer_NrmRegions_1},
+            {label: '<img src="legend/ProjectReCon20202026202020261_2.png" /> Project ReCon 2020-2026 -  2020-2026 (1)', layer: layer_ProjectReCon20202026202020261_2},
+            {label: '<img src="legend/ProjectRecon20202026Trackers_1.png" /> Project Recon 2020-2026 Trackers', layer: layer_ProjectRecon20202026Trackers_1},
             {label: "Google Satellite Hybrid", layer: layer_GoogleSatelliteHybrid_0},]
         var lay = L.control.layers.tree(null, overlaysTree,{
             //namedToggle: true,
@@ -391,20 +389,60 @@
             //openedSymbol: '&#8863; &#x1f5c1;',
             //collapseAll: 'Collapse all',
             //expandAll: 'Expand all',
-            collapsed: true,
+            collapsed: false, 
         });
         lay.addTo(map);
+		document.addEventListener("DOMContentLoaded", function() {
+            // set new Layers List height which considers toggle icon
+            function newLayersListHeight() {
+                var layerScrollbarElement = document.querySelector('.leaflet-control-layers-scrollbar');
+                if (layerScrollbarElement) {
+                    var layersListElement = document.querySelector('.leaflet-control-layers-list');
+                    var originalHeight = layersListElement.style.height 
+                        || window.getComputedStyle(layersListElement).height;
+                    var newHeight = parseFloat(originalHeight) - 50;
+                    layersListElement.style.height = newHeight + 'px';
+                }
+            }
+            var isLayersListExpanded = true;
+            var controlLayersElement = document.querySelector('.leaflet-control-layers');
+            var toggleLayerControl = document.querySelector('.leaflet-control-layers-toggle');
+            // toggle Collapsed/Expanded and apply new Layers List height
+            toggleLayerControl.addEventListener('click', function() {
+                if (isLayersListExpanded) {
+                    controlLayersElement.classList.remove('leaflet-control-layers-expanded');
+                } else {
+                    controlLayersElement.classList.add('leaflet-control-layers-expanded');
+                }
+                isLayersListExpanded = !isLayersListExpanded;
+                newLayersListHeight()
+            });	
+			// apply new Layers List height if toggle layerstree
+			if (controlLayersElement) {
+				controlLayersElement.addEventListener('click', function(event) {
+					var toggleLayerHeaderPointer = event.target.closest('.leaflet-layerstree-header-pointer span');
+					if (toggleLayerHeaderPointer) {
+						newLayersListHeight();
+					}
+				});
+			}
+            // Collapsed/Expanded at Start to apply new height
+            setTimeout(function() {
+                toggleLayerControl.click();
+            }, 10);
+            setTimeout(function() {
+                toggleLayerControl.click();
+            }, 10);
+            // Collapsed touch/small screen
+            var isSmallScreen = window.innerWidth < 650;
+            if (isSmallScreen) {
+                setTimeout(function() {
+                    controlLayersElement.classList.remove('leaflet-control-layers-expanded');
+                    isLayersListExpanded = !isLayersListExpanded;
+                }, 500);
+            }  
+        });       
         setBounds();
-        resetLabels([layer_NrmRegions_1]);
-        map.on("zoomend", function(){
-            resetLabels([layer_NrmRegions_1]);
-        });
-        map.on("layeradd", function(){
-            resetLabels([layer_NrmRegions_1]);
-        });
-        map.on("layerremove", function(){
-            resetLabels([layer_NrmRegions_1]);
-        });
         </script>        
     </body>
 </html>
